@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achat de stock — T-shirts</title>
+<style>
+  :root{
+    --ink:#1c1c1c;
+    --paper:#faf9f6;
+    --accent:#2f5d50;
+    --accent-soft:#e6efec;
+    --line:#d8d5cc;
+    --danger:#a13d3d;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    padding:0 0 60px;
+  }
+  header{
+    background:var(--accent);
+    color:#fff;
+    padding:22px 20px 18px;
+    text-align:center;
+  }
+  header h1{margin:0;font-size:1.25rem;letter-spacing:.02em;font-weight:600;}
+  header p{margin:4px 0 0;font-size:.8rem;opacity:.85;}
+  header nav{margin-top:10px;display:flex;gap:14px;justify-content:center;}
+  header a{color:#fff;font-size:.78rem;text-decoration:underline;opacity:.9;}
+  main{max-width:480px;margin:0 auto;padding:20px 16px;}
+
+  .switch{
+    display:flex;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:4px;
+    margin-bottom:18px;
+  }
+  .switch button{
+    flex:1;
+    padding:10px;
+    border:none;
+    background:transparent;
+    border-radius:7px;
+    font-size:.85rem;
+    font-weight:700;
+    color:#888;
+    cursor:pointer;
+  }
+  .switch button.active{
+    background:var(--accent);
+    color:#fff;
+  }
+
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-size:.85rem;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--accent);
+    margin:0 0 14px;
+    font-weight:700;
+  }
+  label{display:block;font-size:.82rem;font-weight:600;margin-bottom:5px;color:#444;}
+  .field{margin-bottom:14px;}
+  input, select, textarea{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:1rem;
+    background:#fff;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .produit-info{
+    display:none;
+    background:var(--accent-soft);
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:.85rem;
+    margin-top:8px;
+    color:var(--accent);
+  }
+  .produit-info.show{display:block;}
+
+  button.submit-btn{
+    width:100%;
+    padding:14px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    letter-spacing:.02em;
+  }
+  button.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
+  button.submit-btn:active:not(:disabled){transform:scale(0.98);}
+
+  .msg{margin-top:12px;padding:12px;border-radius:8px;font-size:.88rem;display:none;}
+  .msg.success{display:block;background:#e3f0e6;color:#215a34;border:1px solid #b6dcc0;}
+  .msg.error{display:block;background:#fbeaea;color:var(--danger);border:1px solid #edc4c4;}
+  .loading{text-align:center;padding:30px;color:#888;font-size:.9rem;}
+  small.hint{display:block;margin-top:4px;color:#888;font-size:.75rem;}
+  .section{display:none;}
+  .section.active{display:block;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Achat de stock</h1>
+  <p>Réapprovisionnement & nouveaux produits</p>
+  <nav>
+    <a href="commande.html">Nouvelle commande</a>
+    <a href="suivi.html">Suivi des commandes</a>
+  </nav>
+</header>
+
+<main>
+
+  <div id="loadingState" class="loading">Chargement du catalogue…</div>
+
+  <div id="contenu" style="display:none;">
+
+    <div class="switch">
+      <button type="button" id="btnExistant" class="active">Réapprovisionner</button>
+      <button type="button" id="btnNouveau">Nouveau produit</button>
+    </div>
+
+    <!-- ============ RÉAPPROVISIONNEMENT ============ -->
+    <div id="sectionExistant" class="section active">
+      <form id="formExistant">
+        <div class="card">
+          <h2>Produit à réapprovisionner</h2>
+          <div class="field">
+            <label for="produitExistant">Modèle — Taille — Couleur</label>
+            <select id="produitExistant" required>
+              <option value="">Choisir un produit…</option>
+            </select>
+            <div id="produitExistantInfo" class="produit-info"></div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="quantiteAchat">Quantité achetée</label>
+              <input type="number" id="quantiteAchat" min="1" value="1" required>
+            </div>
+            <div class="field">
+              <label for="prixAchatExistant">Prix d'achat unitaire (DA)</label>
+              <input type="number" id="prixAchatExistant" min="0" placeholder="Laisser vide = inchangé">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Détails (optionnel)</h2>
+          <div class="field">
+            <label for="fournisseurExistant">Fournisseur</label>
+            <input type="text" id="fournisseurExistant" placeholder="Nom du fournisseur">
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitExistantBtn">Enregistrer l'achat</button>
+        <div id="msgExistant" class="msg"></div>
+      </form>
+    </div>
+
+    <!-- ============ NOUVEAU PRODUIT ============ -->
+    <div id="sectionNouveau" class="section">
+      <form id="formNouveau">
+        <div class="card">
+          <h2>Nouveau produit</h2>
+          <div class="field">
+            <label for="refNouveau">Référence</label>
+            <input type="text" id="refNouveau" placeholder="Ex: TS-003" required>
+          </div>
+          <div class="field">
+            <label for="modeleNouveau">Modèle</label>
+            <input type="text" id="modeleNouveau" placeholder="Ex: Oversize Rayé" required>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="typeColNouveau">Type de col</label>
+              <input type="text" id="typeColNouveau" placeholder="Ex: Col rond">
+            </div>
+            <div class="field">
+              <label for="tailleNouveau">Taille</label>
+              <input type="text" id="tailleNouveau" placeholder="Ex: M, L, XL" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="couleurNouveau">Couleur</label>
+            <input type="text" id="couleurNouveau" placeholder="Ex: Noir" required>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Prix & stock</h2>
+          <div class="row2">
+            <div class="field">
+              <label for="prixAchatNouveau">Prix d'achat (DA)</label>
+              <input type="number" id="prixAchatNouveau" min="0" required>
+            </div>
+            <div class="field">
+              <label for="prixVenteNouveau">Prix de vente (DA)</label>
+              <input type="number" id="prixVenteNouveau" min="0" required>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="stockNouveau">Stock initial</label>
+              <input type="number" id="stockNouveau" min="0" value="0" required>
+            </div>
+            <div class="field">
+              <label for="seuilNouveau">Seuil d'alerte</label>
+              <input type="number" id="seuilNouveau" min="0" value="3">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Détails (optionnel)</h2>
+          <div class="field">
+            <label for="fournisseurNouveau">Fournisseur</label>
+            <input type="text" id="fournisseurNouveau" placeholder="Nom du fournisseur">
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitNouveauBtn">Créer le produit</button>
+        <div id="msgNouveau" class="msg"></div>
+      </form>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  // ⚠️ Même URL que dans commande.html et suivi.html (finit par /exec)
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyxLaB-9d8QwNvl0STtVUJGsPupqN0vr8gbDmBygFYlCTehjDZl34Qf97hIVBos3AsQbw/exec";
+
+  let produits = [];
+
+  async function init() {
+    try {
+      const res = await fetch(WEBAPP_URL + "?action=produits_tous");
+      produits = await res.json();
+      remplirProduitsExistant(produits);
+      document.getElementById("loadingState").style.display = "none";
+      document.getElementById("contenu").style.display = "block";
+    } catch (err) {
+      document.getElementById("loadingState").textContent =
+        "Erreur de chargement : " + err.message;
+    }
+  }
+
+  function remplirProduitsExistant(list) {
+    const select = document.getElementById("produitExistant");
+    select.innerHTML = '<option value="">Choisir un produit…</option>';
+    list.forEach((p, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = `${p.modele} — ${p.typeCol || ""} — ${p.taille} — ${p.couleur} (stock: ${p.stock})`;
+      select.appendChild(opt);
+    });
+  }
+
+  // --- Bascule entre les deux modes ---
+  const btnExistant = document.getElementById("btnExistant");
+  const btnNouveau = document.getElementById("btnNouveau");
+  const sectionExistant = document.getElementById("sectionExistant");
+  const sectionNouveau = document.getElementById("sectionNouveau");
+
+  btnExistant.addEventListener("click", () => {
+    btnExistant.classList.add("active");
+    btnNouveau.classList.remove("active");
+    sectionExistant.classList.add("active");
+    sectionNouveau.classList.remove("active");
+  });
+  btnNouveau.addEventListener("click", () => {
+    btnNouveau.classList.add("active");
+    btnExistant.classList.remove("active");
+    sectionNouveau.classList.add("active");
+    sectionExistant.classList.remove("active");
+  });
+
+  // --- Affichage infos produit sélectionné (réappro) ---
+  document.getElementById("produitExistant").addEventListener("change", (e) => {
+    const infoBox = document.getElementById("produitExistantInfo");
+    const idx = e.target.value;
+    if (idx === "") { infoBox.classList.remove("show"); return; }
+    const p = produits[idx];
+    infoBox.classList.add("show");
+    infoBox.textContent = `Stock actuel : ${p.stock} — Prix d'achat actuel : ${p.prixAchat || 0} DA — Statut : ${p.statut}`;
+    document.getElementById("prixAchatExistant").placeholder = "Actuel : " + (p.prixAchat || 0) + " DA (laisser vide = inchangé)";
+  });
+
+  // --- Soumission réapprovisionnement ---
+  document.getElementById("formExistant").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const msgBox = document.getElementById("msgExistant");
+    const btn = document.getElementById("submitExistantBtn");
+    const idx = document.getElementById("produitExistant").value;
+
+    if (idx === "") {
+      msgBox.className = "msg error"; msgBox.style.display = "block";
+      msgBox.textContent = "Choisissez un produit."; return;
+    }
+    const p = produits[idx];
+    const quantite = parseInt(document.getElementById("quantiteAchat").value) || 0;
+    const prixAchatVal = document.getElementById("prixAchatExistant").value;
+
+    const payload = {
+      type: "achat_stock",
+      mode: "existant",
+      ref: p.ref,
+      quantite: quantite,
+      prixAchat: prixAchatVal === "" ? undefined : Number(prixAchatVal),
+      fournisseur: document.getElementById("fournisseurExistant").value
+    };
+
+    btn.disabled = true; btn.textContent = "Enregistrement…";
+    msgBox.className = "msg"; msgBox.style.display = "none";
+
+    try {
+      const res = await fetch(WEBAPP_URL, { method: "POST", body: JSON.stringify(payload) });
+      const result = await res.json();
+      if (result.success) {
+        msgBox.className = "msg success"; msgBox.textContent = "✓ " + result.message;
+        document.getElementById("formExistant").reset();
+        document.getElementById("produitExistantInfo").classList.remove("show");
+        init();
+      } else {
+        msgBox.className = "msg error"; msgBox.textContent = "✗ " + result.message;
+      }
+    } catch (err) {
+      msgBox.className = "msg error"; msgBox.textContent = "Erreur réseau : " + err.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Enregistrer l'achat";
+    }
+  });
+
+  // --- Soumission nouveau produit ---
+  document.getElementById("formNouveau").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const msgBox = document.getElementById("msgNouveau");
+    const btn = document.getElementById("submitNouveauBtn");
+
+    const payload = {
+      type: "achat_stock",
+      mode: "nouveau",
+      ref: document.getElementById("refNouveau").value.trim(),
+      modele: document.getElementById("modeleNouveau").value,
+      typeCol: document.getElementById("typeColNouveau").value,
+      taille: document.getElementById("tailleNouveau").value,
+      couleur: document.getElementById("couleurNouveau").value,
+      prixAchat: document.getElementById("prixAchatNouveau").value,
+      prixVente: document.getElementById("prixVenteNouveau").value,
+      stock: document.getElementById("stockNouveau").value,
+      seuil: document.getElementById("seuilNouveau").value,
+      fournisseur: document.getElementById("fournisseurNouveau").value
+    };
+
+    btn.disabled = true; btn.textContent = "Création…";
+    msgBox.className = "msg"; msgBox.style.display = "none";
+
+    try {
+      const res = await fetch(WEBAPP_URL, { method: "POST", body: JSON.stringify(payload) });
+      const result = await res.json();
+      if (result.success) {
+        msgBox.className = "msg success"; msgBox.textContent = "✓ " + result.message;
+        document.getElementById("formNouveau").reset();
+        init();
+      } else {
+        msgBox.className = "msg error"; msgBox.textContent = "✗ " + result.message;
+      }
+    } catch (err) {
+      msgBox.className = "msg error"; msgBox.textContent = "Erreur réseau : " + err.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Créer le produit";
+    }
+  });
+
+  init();
+</script>
+
+</body>
+</html>
