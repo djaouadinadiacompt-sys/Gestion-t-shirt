@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Test de connexion</title>
+<style>
+  body{font-family:Arial,sans-serif;padding:20px;max-width:700px;margin:0 auto;line-height:1.6;}
+  h1{font-size:1.2rem;}
+  pre{background:#f4f4f4;padding:14px;border-radius:8px;white-space:pre-wrap;word-break:break-word;font-size:.85rem;}
+  .ok{color:#215a34;font-weight:bold;}
+  .fail{color:#a13d3d;font-weight:bold;}
+</style>
+</head>
+<body>
+  <h1>Test de connexion à Apps Script</h1>
+  <p>Cette page teste directement la connexion et affiche le résultat ci-dessous, sans avoir besoin d'ouvrir la console.</p>
+  <div id="resultat">Test en cours…</div>
+
+<script>
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyxLaB-9d8QwNvl0STtVUJGsPupqN0vr8gbDmBygFYlCTehjDZl34Qf97hIVBos3AsQbw/exec";
+
+  async function testerConnexion() {
+    const div = document.getElementById("resultat");
+    let sortie = "";
+
+    sortie += "URL testée :\n" + WEBAPP_URL + "?action=produits\n\n";
+
+    try {
+      sortie += "Envoi de la requête...\n";
+      const res = await fetch(WEBAPP_URL + "?action=produits");
+      sortie += "Statut HTTP reçu : " + res.status + " " + res.statusText + "\n\n";
+
+      const texte = await res.text();
+      sortie += "Contenu reçu (500 premiers caractères) :\n" + texte.substring(0, 500) + "\n\n";
+
+      try {
+        const json = JSON.parse(texte);
+        div.innerHTML = '<p class="ok">✓ SUCCÈS — la connexion fonctionne et renvoie du JSON valide.</p><pre>' + sortie + "\n\nNombre de produits reçus : " + (Array.isArray(json) ? json.length : "N/A") + '</pre>';
+      } catch (parseErr) {
+        div.innerHTML = '<p class="fail">✗ ÉCHEC — la réponse n\'est pas du JSON valide (probablement une page HTML Google au lieu de données).</p><pre>' + sortie + '</pre>';
+      }
+    } catch (err) {
+      sortie += "ERREUR : " + err.message + "\n";
+      sortie += "Type d'erreur : " + err.name + "\n";
+      div.innerHTML = '<p class="fail">✗ ÉCHEC — la requête a été bloquée avant même de recevoir une réponse (souvent un problème CORS ou réseau).</p><pre>' + sortie + '</pre>';
+    }
+  }
+
+  testerConnexion();
+</script>
+</body>
+</html>
