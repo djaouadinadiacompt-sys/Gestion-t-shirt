@@ -28,22 +28,10 @@
     padding:22px 20px 18px;
     text-align:center;
   }
-  header h1{
-    margin:0;
-    font-size:1.25rem;
-    letter-spacing:.02em;
-    font-weight:600;
-  }
-  header p{
-    margin:4px 0 0;
-    font-size:.8rem;
-    opacity:.85;
-  }
-  main{
-    max-width:480px;
-    margin:0 auto;
-    padding:20px 16px;
-  }
+  header h1{margin:0;font-size:1.25rem;letter-spacing:.02em;font-weight:600;}
+  header p{margin:4px 0 0;font-size:.8rem;opacity:.85;}
+  header a{display:inline-block;margin-top:10px;color:#fff;font-size:.78rem;text-decoration:underline;opacity:.9;}
+  main{max-width:480px;margin:0 auto;padding:20px 16px;}
   .card{
     background:#fff;
     border:1px solid var(--line);
@@ -59,13 +47,7 @@
     margin:0 0 14px;
     font-weight:700;
   }
-  label{
-    display:block;
-    font-size:.82rem;
-    font-weight:600;
-    margin-bottom:5px;
-    color:#444;
-  }
+  label{display:block;font-size:.82rem;font-weight:600;margin-bottom:5px;color:#444;}
   .field{margin-bottom:14px;}
   input, select, textarea{
     width:100%;
@@ -82,11 +64,7 @@
     border-color:var(--accent);
     box-shadow:0 0 0 3px var(--accent-soft);
   }
-  .row2{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .produit-info{
     display:none;
     background:var(--accent-soft);
@@ -97,6 +75,51 @@
     color:var(--accent);
   }
   .produit-info.show{display:block;}
+
+  .add-btn{
+    width:100%;
+    padding:12px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    border:1px dashed var(--accent);
+    border-radius:8px;
+    font-size:.9rem;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .add-btn:active{transform:scale(0.98);}
+
+  .panier-vide{
+    text-align:center;
+    color:#999;
+    font-size:.85rem;
+    padding:16px 0;
+  }
+  .panier-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+    gap:8px;
+  }
+  .panier-item:last-child{border-bottom:none;}
+  .panier-item-info{font-size:.85rem;line-height:1.4;}
+  .panier-item-info b{display:block;font-size:.9rem;}
+  .panier-item-info span{color:#888;font-size:.78rem;}
+  .panier-item-right{display:flex;align-items:center;gap:10px;}
+  .panier-item-total{font-weight:700;color:var(--accent);font-size:.88rem;white-space:nowrap;}
+  .remove-btn{
+    background:none;
+    border:none;
+    color:var(--danger);
+    font-size:1.1rem;
+    cursor:pointer;
+    padding:2px 6px;
+    width:auto;
+  }
+
   .total-box{
     background:var(--accent);
     color:#fff;
@@ -107,7 +130,8 @@
   }
   .total-box .label{font-size:.75rem;opacity:.85;text-transform:uppercase;letter-spacing:.05em;}
   .total-box .amount{font-size:1.6rem;font-weight:700;margin-top:2px;}
-  button{
+
+  button.submit-btn{
     width:100%;
     padding:14px;
     background:var(--accent);
@@ -119,29 +143,14 @@
     cursor:pointer;
     letter-spacing:.02em;
   }
-  button:disabled{opacity:.5;cursor:not-allowed;}
-  button:active:not(:disabled){transform:scale(0.98);}
-  .msg{
-    margin-top:12px;
-    padding:12px;
-    border-radius:8px;
-    font-size:.88rem;
-    display:none;
-  }
+  button.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
+  button.submit-btn:active:not(:disabled){transform:scale(0.98);}
+
+  .msg{margin-top:12px;padding:12px;border-radius:8px;font-size:.88rem;display:none;}
   .msg.success{display:block;background:#e3f0e6;color:#215a34;border:1px solid #b6dcc0;}
   .msg.error{display:block;background:#fbeaea;color:var(--danger);border:1px solid #edc4c4;}
-  .loading{
-    text-align:center;
-    padding:30px;
-    color:#888;
-    font-size:.9rem;
-  }
-  small.hint{
-    display:block;
-    margin-top:4px;
-    color:#888;
-    font-size:.75rem;
-  }
+  .loading{text-align:center;padding:30px;color:#888;font-size:.9rem;}
+  small.hint{display:block;margin-top:4px;color:#888;font-size:.75rem;}
 </style>
 </head>
 <body>
@@ -149,7 +158,7 @@
 <header>
   <h1>Nouvelle commande</h1>
   <p>Saisie interne — t-shirts</p>
-  <a href="suivi.html" style="display:inline-block;margin-top:10px;color:#fff;font-size:.78rem;text-decoration:underline;opacity:.9;">Voir le suivi des commandes →</a>
+  <a href="suivi.html">Voir le suivi des commandes →</a>
 </header>
 
 <main>
@@ -172,36 +181,70 @@
         </div>
         <div class="field">
           <label for="wilaya">Wilaya</label>
-          <input type="text" id="wilaya" name="wilaya" required placeholder="Ex: Alger">
+          <select id="wilaya" name="wilaya" required>
+            <option value="">Choisir…</option>
+            <option>Adrar</option><option>Chlef</option><option>Laghouat</option>
+            <option>Oum El Bouaghi</option><option>Batna</option><option>Béjaïa</option>
+            <option>Biskra</option><option>Béchar</option><option>Blida</option>
+            <option>Bouira</option><option>Tamanrasset</option><option>Tébessa</option>
+            <option>Tlemcen</option><option>Tiaret</option><option>Tizi Ouzou</option>
+            <option>Alger</option><option>Djelfa</option><option>Jijel</option>
+            <option>Sétif</option><option>Saïda</option><option>Skikda</option>
+            <option>Sidi Bel Abbès</option><option>Annaba</option><option>Guelma</option>
+            <option>Constantine</option><option>Médéa</option><option>Mostaganem</option>
+            <option>M'Sila</option><option>Mascara</option><option>Ouargla</option>
+            <option>Oran</option><option>El Bayadh</option><option>Illizi</option>
+            <option>Bordj Bou Arréridj</option><option>Boumerdès</option><option>El Tarf</option>
+            <option>Tindouf</option><option>Tissemsilt</option><option>El Oued</option>
+            <option>Khenchela</option><option>Souk Ahras</option><option>Tipaza</option>
+            <option>Mila</option><option>Aïn Defla</option><option>Naâma</option>
+            <option>Aïn Témouchent</option><option>Ghardaïa</option><option>Relizane</option>
+            <option>Timimoun</option><option>Bordj Badji Mokhtar</option><option>Ouled Djellal</option>
+            <option>Béni Abbès</option><option>In Salah</option><option>In Guezzam</option>
+            <option>Touggourt</option><option>Djanet</option><option>El M'Ghair</option>
+            <option>El Meniaa</option>
+          </select>
         </div>
+      </div>
+      <div class="field">
+        <label for="adresse">Adresse (rue, quartier…)</label>
+        <input type="text" id="adresse" name="adresse" placeholder="Ex: Cité 5 Juillet, bloc 3">
       </div>
     </div>
 
     <div class="card">
-      <h2>Produit</h2>
+      <h2>Ajouter un article</h2>
       <div class="field">
         <label for="produit">Modèle — Taille — Couleur</label>
-        <select id="produit" name="produit" required>
+        <select id="produit">
           <option value="">Choisir un produit…</option>
         </select>
         <div id="produitInfo" class="produit-info"></div>
       </div>
       <div class="field">
         <label for="quantite">Quantité</label>
-        <input type="number" id="quantite" name="quantite" min="1" value="1" required>
+        <input type="number" id="quantite" min="1" value="1">
         <small class="hint" id="stockHint"></small>
       </div>
+      <button type="button" class="add-btn" id="addToCartBtn">+ Ajouter au panier</button>
+    </div>
+
+    <div class="card">
+      <h2>Panier</h2>
+      <div id="panierList">
+        <div class="panier-vide">Aucun article ajouté pour l'instant.</div>
+      </div>
       <div class="total-box">
-        <div class="label">Total</div>
+        <div class="label">Total commande</div>
         <div class="amount" id="totalDisplay">0 DA</div>
       </div>
     </div>
 
     <div class="card">
-      <h2>Paiement & livraison</h2>
+      <h2>Paiement & remarques</h2>
       <div class="field">
         <label for="modePaiement">Mode de paiement</label>
-        <select id="modePaiement" name="modePaiement" required>
+        <select id="modePaiement" required>
           <option value="Paiement à la livraison">Paiement à la livraison</option>
           <option value="Versement">Versement</option>
           <option value="Virement">Virement</option>
@@ -209,11 +252,11 @@
       </div>
       <div class="field">
         <label for="commentaire">Commentaire (optionnel)</label>
-        <textarea id="commentaire" name="commentaire" rows="2" placeholder="Précisions sur la commande…"></textarea>
+        <textarea id="commentaire" rows="2" placeholder="Précisions sur la commande…"></textarea>
       </div>
     </div>
 
-    <button type="submit" id="submitBtn">Enregistrer la commande</button>
+    <button type="submit" class="submit-btn" id="submitBtn">Enregistrer la commande</button>
     <div id="msgBox" class="msg"></div>
 
   </form>
@@ -221,10 +264,11 @@
 </main>
 
 <script>
-  // ⚠️ Remplace par l'URL de ton déploiement Apps Script (se termine par /exec)
+  // ⚠️ URL de ton déploiement Apps Script (finit par /exec)
   const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyvGOu4rP1njD9dFSI9UKh0beS00YgDe2akPTcFz3yaoWhQMSy-BcNeH_mFcjBSTjRvOA/exec";
 
   let produits = [];
+  let panier = []; // [{ ref, modele, taille, couleur, quantite, prixVente }]
 
   async function init() {
     try {
@@ -245,6 +289,7 @@
 
   function remplirProduits(list) {
     const select = document.getElementById("produit");
+    select.innerHTML = '<option value="">Choisir un produit…</option>';
     list.forEach((p, i) => {
       const opt = document.createElement("option");
       opt.value = i;
@@ -255,6 +300,7 @@
 
   function remplirClients(list) {
     const datalist = document.getElementById("clientsList");
+    datalist.innerHTML = "";
     list.forEach(c => {
       const opt = document.createElement("option");
       opt.value = c.nom;
@@ -262,8 +308,10 @@
     });
     document.getElementById("client").addEventListener("input", (e) => {
       const found = list.find(c => c.nom === e.target.value);
-      if (found && found.tel) {
-        document.getElementById("telephone").value = found.tel;
+      if (found) {
+        if (found.tel) document.getElementById("telephone").value = found.tel;
+        if (found.wilaya) document.getElementById("wilaya").value = found.wilaya;
+        if (found.adresse) document.getElementById("adresse").value = found.adresse;
       }
     });
   }
@@ -273,7 +321,12 @@
     return idx === "" ? null : produits[idx];
   }
 
-  function majAffichage() {
+  // Stock déjà réservé dans le panier pour une référence donnée
+  function stockReserve(ref) {
+    return panier.filter(a => a.ref === ref).reduce((s, a) => s + a.quantite, 0);
+  }
+
+  function majAffichageProduit() {
     const p = produitSelectionne();
     const infoBox = document.getElementById("produitInfo");
     const stockHint = document.getElementById("stockHint");
@@ -281,35 +334,89 @@
 
     if (!p) {
       infoBox.classList.remove("show");
+      stockHint.textContent = "";
+      return;
+    }
+
+    const dispo = p.stock - stockReserve(p.ref);
+    infoBox.classList.add("show");
+    infoBox.textContent = `Prix unitaire : ${p.prixVente} DA — Stock disponible : ${dispo}`;
+    stockHint.textContent = qte > dispo ? "⚠ Quantité supérieure au stock disponible !" : "";
+  }
+
+  document.getElementById("produit").addEventListener("change", majAffichageProduit);
+  document.getElementById("quantite").addEventListener("input", majAffichageProduit);
+
+  document.getElementById("addToCartBtn").addEventListener("click", () => {
+    const p = produitSelectionne();
+    const qte = parseInt(document.getElementById("quantite").value) || 0;
+
+    if (!p) { alert("Choisis un produit."); return; }
+    if (qte < 1) { alert("Quantité invalide."); return; }
+
+    const dispo = p.stock - stockReserve(p.ref);
+    if (qte > dispo) { alert("Stock insuffisant. Il reste " + dispo + " unité(s) disponible(s)."); return; }
+
+    panier.push({
+      ref: p.ref, modele: p.modele, taille: p.taille, couleur: p.couleur,
+      quantite: qte, prixVente: p.prixVente
+    });
+
+    document.getElementById("quantite").value = 1;
+    document.getElementById("produit").value = "";
+    document.getElementById("produitInfo").classList.remove("show");
+    document.getElementById("stockHint").textContent = "";
+
+    afficherPanier();
+  });
+
+  function afficherPanier() {
+    const container = document.getElementById("panierList");
+    if (panier.length === 0) {
+      container.innerHTML = '<div class="panier-vide">Aucun article ajouté pour l\\'instant.</div>';
       document.getElementById("totalDisplay").textContent = "0 DA";
       return;
     }
 
-    infoBox.classList.add("show");
-    infoBox.textContent = `Prix unitaire : ${p.prixVente} DA — Stock disponible : ${p.stock}`;
-    stockHint.textContent = qte > p.stock ? "⚠ Quantité supérieure au stock disponible !" : "";
-    document.getElementById("totalDisplay").textContent = (p.prixVente * qte).toLocaleString("fr-FR") + " DA";
+    let total = 0;
+    container.innerHTML = panier.map((a, i) => {
+      const t = a.quantite * a.prixVente;
+      total += t;
+      return `
+        <div class="panier-item">
+          <div class="panier-item-info">
+            <b>${escapeHtml(a.modele)}</b>
+            <span>${escapeHtml(a.taille)} · ${escapeHtml(a.couleur)} · × ${a.quantite}</span>
+          </div>
+          <div class="panier-item-right">
+            <div class="panier-item-total">${t.toLocaleString('fr-FR')} DA</div>
+            <button type="button" class="remove-btn" onclick="retirerDuPanier(${i})">✕</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+    document.getElementById("totalDisplay").textContent = total.toLocaleString('fr-FR') + " DA";
   }
 
-  document.getElementById("produit").addEventListener("change", majAffichage);
-  document.getElementById("quantite").addEventListener("input", majAffichage);
+  function retirerDuPanier(index) {
+    panier.splice(index, 1);
+    afficherPanier();
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
 
   document.getElementById("cmdForm").addEventListener("submit", async function(e) {
     e.preventDefault();
-    const p = produitSelectionne();
     const msgBox = document.getElementById("msgBox");
     const btn = document.getElementById("submitBtn");
 
-    if (!p) {
+    if (panier.length === 0) {
       msgBox.className = "msg error";
-      msgBox.textContent = "Choisis un produit.";
-      return;
-    }
-
-    const qte = parseInt(document.getElementById("quantite").value);
-    if (qte > p.stock) {
-      msgBox.className = "msg error";
-      msgBox.textContent = "Stock insuffisant pour cette quantité.";
+      msgBox.style.display = "block";
+      msgBox.textContent = "Ajoute au moins un article au panier.";
       return;
     }
 
@@ -318,14 +425,13 @@
       client: document.getElementById("client").value,
       telephone: document.getElementById("telephone").value,
       wilaya: document.getElementById("wilaya").value,
-      ref: p.ref,
-      modele: p.modele,
-      taille: p.taille,
-      couleur: p.couleur,
-      quantite: qte,
-      prixUnitaire: p.prixVente,
+      adresse: document.getElementById("adresse").value,
       modePaiement: document.getElementById("modePaiement").value,
-      commentaire: document.getElementById("commentaire").value
+      commentaire: document.getElementById("commentaire").value,
+      articles: panier.map(a => ({
+        ref: a.ref, modele: a.modele, taille: a.taille, couleur: a.couleur,
+        quantite: a.quantite, prixUnitaire: a.prixVente
+      }))
     };
 
     btn.disabled = true;
@@ -334,20 +440,16 @@
     msgBox.style.display = "none";
 
     try {
-      const res = await fetch(WEBAPP_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
+      const res = await fetch(WEBAPP_URL, { method: "POST", body: JSON.stringify(payload) });
       const result = await res.json();
 
       if (result.success) {
         msgBox.className = "msg success";
         msgBox.textContent = "✓ " + result.message;
         document.getElementById("cmdForm").reset();
-        document.getElementById("produitInfo").classList.remove("show");
-        document.getElementById("totalDisplay").textContent = "0 DA";
-        // Rafraîchir les stocks affichés
-        init();
+        panier = [];
+        afficherPanier();
+        init(); // rafraîchir les stocks affichés
       } else {
         msgBox.className = "msg error";
         msgBox.textContent = "✗ " + result.message;
