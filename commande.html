@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saisie Commande — T-shirts</title>
+<style>
+  :root{
+    --ink:#1c1c1c;
+    --paper:#faf9f6;
+    --accent:#2f5d50;
+    --accent-soft:#e6efec;
+    --line:#d8d5cc;
+    --danger:#a13d3d;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    padding:0 0 60px;
+  }
+  header{
+    background:var(--accent);
+    color:#fff;
+    padding:22px 20px 18px;
+    text-align:center;
+  }
+  header h1{
+    margin:0;
+    font-size:1.25rem;
+    letter-spacing:.02em;
+    font-weight:600;
+  }
+  header p{
+    margin:4px 0 0;
+    font-size:.8rem;
+    opacity:.85;
+  }
+  main{
+    max-width:480px;
+    margin:0 auto;
+    padding:20px 16px;
+  }
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-size:.85rem;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--accent);
+    margin:0 0 14px;
+    font-weight:700;
+  }
+  label{
+    display:block;
+    font-size:.82rem;
+    font-weight:600;
+    margin-bottom:5px;
+    color:#444;
+  }
+  .field{margin-bottom:14px;}
+  input, select, textarea{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:1rem;
+    background:#fff;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  .row2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .produit-info{
+    display:none;
+    background:var(--accent-soft);
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:.85rem;
+    margin-top:8px;
+    color:var(--accent);
+  }
+  .produit-info.show{display:block;}
+  .total-box{
+    background:var(--accent);
+    color:#fff;
+    border-radius:8px;
+    padding:14px;
+    text-align:center;
+    margin-top:6px;
+  }
+  .total-box .label{font-size:.75rem;opacity:.85;text-transform:uppercase;letter-spacing:.05em;}
+  .total-box .amount{font-size:1.6rem;font-weight:700;margin-top:2px;}
+  button{
+    width:100%;
+    padding:14px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    letter-spacing:.02em;
+  }
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  button:active:not(:disabled){transform:scale(0.98);}
+  .msg{
+    margin-top:12px;
+    padding:12px;
+    border-radius:8px;
+    font-size:.88rem;
+    display:none;
+  }
+  .msg.success{display:block;background:#e3f0e6;color:#215a34;border:1px solid #b6dcc0;}
+  .msg.error{display:block;background:#fbeaea;color:var(--danger);border:1px solid #edc4c4;}
+  .loading{
+    text-align:center;
+    padding:30px;
+    color:#888;
+    font-size:.9rem;
+  }
+  small.hint{
+    display:block;
+    margin-top:4px;
+    color:#888;
+    font-size:.75rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Nouvelle commande</h1>
+  <p>Saisie interne — t-shirts</p>
+  <a href="suivi.html" style="display:inline-block;margin-top:10px;color:#fff;font-size:.78rem;text-decoration:underline;opacity:.9;">Voir le suivi des commandes →</a>
+</header>
+
+<main>
+
+  <div id="loadingState" class="loading">Chargement du catalogue…</div>
+
+  <form id="cmdForm" style="display:none;">
+
+    <div class="card">
+      <h2>Client</h2>
+      <div class="field">
+        <label for="client">Nom du client</label>
+        <input list="clientsList" id="client" name="client" required autocomplete="off" placeholder="Nom et prénom">
+        <datalist id="clientsList"></datalist>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="telephone">Téléphone</label>
+          <input type="tel" id="telephone" name="telephone" required placeholder="05..">
+        </div>
+        <div class="field">
+          <label for="wilaya">Wilaya</label>
+          <input type="text" id="wilaya" name="wilaya" required placeholder="Ex: Alger">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Produit</h2>
+      <div class="field">
+        <label for="produit">Modèle — Taille — Couleur</label>
+        <select id="produit" name="produit" required>
+          <option value="">Choisir un produit…</option>
+        </select>
+        <div id="produitInfo" class="produit-info"></div>
+      </div>
+      <div class="field">
+        <label for="quantite">Quantité</label>
+        <input type="number" id="quantite" name="quantite" min="1" value="1" required>
+        <small class="hint" id="stockHint"></small>
+      </div>
+      <div class="total-box">
+        <div class="label">Total</div>
+        <div class="amount" id="totalDisplay">0 DA</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Paiement & livraison</h2>
+      <div class="field">
+        <label for="modePaiement">Mode de paiement</label>
+        <select id="modePaiement" name="modePaiement" required>
+          <option value="Paiement à la livraison">Paiement à la livraison</option>
+          <option value="Versement">Versement</option>
+          <option value="Virement">Virement</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="commentaire">Commentaire (optionnel)</label>
+        <textarea id="commentaire" name="commentaire" rows="2" placeholder="Précisions sur la commande…"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" id="submitBtn">Enregistrer la commande</button>
+    <div id="msgBox" class="msg"></div>
+
+  </form>
+
+</main>
+
+<script>
+  // ⚠️ Remplace par l'URL de ton déploiement Apps Script (se termine par /exec)
+  const WEBAPP_URL = "COLLE_ICI_TON_URL_APPS_SCRIPT";
+
+  let produits = [];
+
+  async function init() {
+    try {
+      const [prodRes, clientsRes] = await Promise.all([
+        fetch(WEBAPP_URL + "?action=produits").then(r => r.json()),
+        fetch(WEBAPP_URL + "?action=clients").then(r => r.json())
+      ]);
+      produits = prodRes;
+      remplirProduits(produits);
+      remplirClients(clientsRes);
+      document.getElementById("loadingState").style.display = "none";
+      document.getElementById("cmdForm").style.display = "block";
+    } catch (err) {
+      document.getElementById("loadingState").textContent =
+        "Erreur de chargement. Vérifie l'URL Apps Script (WEBAPP_URL) dans le code.";
+    }
+  }
+
+  function remplirProduits(list) {
+    const select = document.getElementById("produit");
+    list.forEach((p, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = `${p.modele} — ${p.typeCol} — ${p.taille} — ${p.couleur} (stock: ${p.stock})`;
+      select.appendChild(opt);
+    });
+  }
+
+  function remplirClients(list) {
+    const datalist = document.getElementById("clientsList");
+    list.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.nom;
+      datalist.appendChild(opt);
+    });
+    document.getElementById("client").addEventListener("input", (e) => {
+      const found = list.find(c => c.nom === e.target.value);
+      if (found && found.tel) {
+        document.getElementById("telephone").value = found.tel;
+      }
+    });
+  }
+
+  function produitSelectionne() {
+    const idx = document.getElementById("produit").value;
+    return idx === "" ? null : produits[idx];
+  }
+
+  function majAffichage() {
+    const p = produitSelectionne();
+    const infoBox = document.getElementById("produitInfo");
+    const stockHint = document.getElementById("stockHint");
+    const qte = parseInt(document.getElementById("quantite").value) || 0;
+
+    if (!p) {
+      infoBox.classList.remove("show");
+      document.getElementById("totalDisplay").textContent = "0 DA";
+      return;
+    }
+
+    infoBox.classList.add("show");
+    infoBox.textContent = `Prix unitaire : ${p.prixVente} DA — Stock disponible : ${p.stock}`;
+    stockHint.textContent = qte > p.stock ? "⚠ Quantité supérieure au stock disponible !" : "";
+    document.getElementById("totalDisplay").textContent = (p.prixVente * qte).toLocaleString("fr-FR") + " DA";
+  }
+
+  document.getElementById("produit").addEventListener("change", majAffichage);
+  document.getElementById("quantite").addEventListener("input", majAffichage);
+
+  document.getElementById("cmdForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const p = produitSelectionne();
+    const msgBox = document.getElementById("msgBox");
+    const btn = document.getElementById("submitBtn");
+
+    if (!p) {
+      msgBox.className = "msg error";
+      msgBox.textContent = "Choisis un produit.";
+      return;
+    }
+
+    const qte = parseInt(document.getElementById("quantite").value);
+    if (qte > p.stock) {
+      msgBox.className = "msg error";
+      msgBox.textContent = "Stock insuffisant pour cette quantité.";
+      return;
+    }
+
+    const payload = {
+      type: "nouvelle_commande",
+      client: document.getElementById("client").value,
+      telephone: document.getElementById("telephone").value,
+      wilaya: document.getElementById("wilaya").value,
+      ref: p.ref,
+      modele: p.modele,
+      taille: p.taille,
+      couleur: p.couleur,
+      quantite: qte,
+      prixUnitaire: p.prixVente,
+      modePaiement: document.getElementById("modePaiement").value,
+      commentaire: document.getElementById("commentaire").value
+    };
+
+    btn.disabled = true;
+    btn.textContent = "Enregistrement…";
+    msgBox.className = "msg";
+    msgBox.style.display = "none";
+
+    try {
+      const res = await fetch(WEBAPP_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+
+      if (result.success) {
+        msgBox.className = "msg success";
+        msgBox.textContent = "✓ " + result.message;
+        document.getElementById("cmdForm").reset();
+        document.getElementById("produitInfo").classList.remove("show");
+        document.getElementById("totalDisplay").textContent = "0 DA";
+        // Rafraîchir les stocks affichés
+        init();
+      } else {
+        msgBox.className = "msg error";
+        msgBox.textContent = "✗ " + result.message;
+      }
+    } catch (err) {
+      msgBox.className = "msg error";
+      msgBox.textContent = "Erreur réseau : " + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Enregistrer la commande";
+    }
+  });
+
+  init();
+</script>
+
+</body>
+</html>
