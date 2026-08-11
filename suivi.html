@@ -125,8 +125,9 @@
       afficherStats();
       afficherListe();
     } catch (err) {
+      document.getElementById("loadingState").style.display = "block";
       document.getElementById("loadingState").textContent =
-        "Erreur de chargement. Vérifie l'URL Apps Script (WEBAPP_URL) dans le code.";
+        "Erreur de chargement : " + err.message;
     }
   }
 
@@ -150,7 +151,7 @@
     const statutFiltre = document.getElementById("statutFilter").value;
 
     const filtrees = commandes.filter(c => {
-      const matchSearch = !search || (c.client || "").toLowerCase().includes(search);
+      const matchSearch = !search || String(c.client || "").toLowerCase().includes(search);
       const matchStatut = !statutFiltre || c.statut === statutFiltre;
       return matchSearch && matchStatut;
     });
@@ -166,9 +167,14 @@
     emptyState.style.display = "none";
 
     container.innerHTML = filtrees.map(c => {
-      const dateStr = c.date ? new Date(c.date).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : "";
-      const telClean = (c.telephone || "").replace(/\s|\./g, "");
-      const statutClass = (c.statut || "").replace(/\s/g, "_");
+      let dateStr = "";
+      try {
+        dateStr = c.date ? new Date(c.date).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : "";
+      } catch (e) { dateStr = ""; }
+
+      // Le téléphone peut être stocké comme nombre dans Google Sheets : on le force en texte avant de le nettoyer
+      const telClean = String(c.telephone || "").replace(/\s|\./g, "");
+      const statutClass = String(c.statut || "").replace(/\s/g, "_");
       const lieuStr = [c.adresse, c.wilaya].filter(Boolean).join(", ");
 
       const articlesHtml = (c.articles || []).map(a => `
