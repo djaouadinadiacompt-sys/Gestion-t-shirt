@@ -23,48 +23,18 @@
     color:var(--ink);
     padding:0 0 60px;
   }
-  header{
-    background:var(--accent);
-    color:#fff;
-    padding:22px 20px 18px;
-    text-align:center;
-  }
+  header{background:var(--accent);color:#fff;padding:22px 20px 18px;text-align:center;}
   header h1{margin:0;font-size:1.25rem;font-weight:600;}
   header p{margin:4px 0 0;font-size:.8rem;opacity:.85;}
   header a{color:#fff;font-size:.78rem;text-decoration:underline;opacity:.9;}
-  main{
-    max-width:640px;
-    margin:0 auto;
-    padding:16px;
-  }
-  .filters{
-    display:flex;
-    gap:8px;
-    margin-bottom:14px;
-    flex-wrap:wrap;
-  }
+  main{max-width:640px;margin:0 auto;padding:16px;}
+  .filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
   .filters input, .filters select{
-    flex:1;
-    min-width:130px;
-    padding:9px 10px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    font-size:.88rem;
-    background:#fff;
+    flex:1;min-width:130px;padding:9px 10px;border:1px solid var(--line);
+    border-radius:8px;font-size:.88rem;background:#fff;
   }
-  .stats{
-    display:flex;
-    gap:10px;
-    margin-bottom:14px;
-  }
-  .stat-box{
-    flex:1;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:10px;
-    text-align:center;
-  }
+  .stats{display:flex;gap:10px;margin-bottom:14px;}
+  .stat-box{flex:1;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;}
   .stat-box .n{font-size:1.2rem;font-weight:700;color:var(--accent);}
   .stat-box .l{font-size:.68rem;color:#888;text-transform:uppercase;letter-spacing:.04em;}
 
@@ -75,59 +45,39 @@
     padding:14px;
     margin-bottom:10px;
   }
-  .commande-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    margin-bottom:8px;
-  }
+  .commande-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
   .commande-client{font-weight:700;font-size:.95rem;}
-  .commande-date{font-size:.72rem;color:#999;margin-top:2px;}
+  .commande-meta{font-size:.72rem;color:#999;margin-top:2px;}
+  .commande-num{font-size:.68rem;color:#bbb;font-family:monospace;margin-top:1px;}
   .commande-total{font-weight:700;color:var(--accent);font-size:.95rem;white-space:nowrap;}
-  .commande-detail{font-size:.85rem;color:#555;margin-bottom:8px;line-height:1.5;}
-  .commande-detail span.tag{
-    display:inline-block;
-    background:var(--accent-soft);
-    color:var(--accent);
-    padding:1px 8px;
-    border-radius:12px;
-    font-size:.72rem;
-    margin-right:4px;
-  }
-  .commande-bottom{
-    display:flex;
-    gap:8px;
-    align-items:center;
-    justify-content:space-between;
-  }
-  select.statut-select{
-    padding:7px 8px;
-    border-radius:6px;
-    border:1px solid var(--line);
-    font-size:.8rem;
-    font-weight:600;
-    flex:1;
-  }
-  .statut-select.En_attente{color:var(--warn);}
-  .statut-select.Livree{color:#215a34;}
-  .statut-select.Annulee, .statut-select.Retournee{color:var(--danger);}
 
+  .articles-list{
+    background:var(--paper);
+    border-radius:8px;
+    padding:8px 10px;
+    margin:8px 0;
+  }
+  .article-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:.82rem;
+    padding:4px 0;
+    color:#444;
+  }
+  .article-row:not(:last-child){border-bottom:1px dashed var(--line);}
+  .article-row .qte{color:#888;font-size:.76rem;}
+
+  .commande-comment{font-size:.8rem;color:#666;margin-bottom:8px;}
+  .commande-bottom{display:flex;gap:8px;align-items:center;justify-content:space-between;}
+  select.statut-select{
+    padding:7px 8px;border-radius:6px;border:1px solid var(--line);
+    font-size:.8rem;font-weight:600;flex:1;
+  }
   .contact-btn{
-    padding:7px 10px;
-    background:var(--accent-soft);
-    color:var(--accent);
-    border-radius:6px;
-    text-decoration:none;
-    font-size:.78rem;
-    font-weight:600;
-    white-space:nowrap;
+    padding:7px 10px;background:var(--accent-soft);color:var(--accent);
+    border-radius:6px;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap;
   }
-  .loading, .empty{
-    text-align:center;
-    padding:40px 20px;
-    color:#888;
-    font-size:.9rem;
-  }
+  .loading, .empty{text-align:center;padding:40px 20px;color:#888;font-size:.9rem;}
 </style>
 </head>
 <body>
@@ -162,7 +112,7 @@
 </main>
 
 <script>
-  // ⚠️ Remplace par la même URL que dans commande.html (finit par /exec)
+  // ⚠️ Même URL que dans commande.html (finit par /exec)
   const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyvGOu4rP1njD9dFSI9UKh0beS00YgDe2akPTcFz3yaoWhQMSy-BcNeH_mFcjBSTjRvOA/exec";
 
   let commandes = [];
@@ -218,25 +168,30 @@
     container.innerHTML = filtrees.map(c => {
       const dateStr = c.date ? new Date(c.date).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : "";
       const telClean = (c.telephone || "").replace(/\s|\./g, "");
-      const statutClass = (c.statut || "").replace(/\s/g, "_").replace("é","e").replace("É","E");
+      const statutClass = (c.statut || "").replace(/\s/g, "_");
+      const lieuStr = [c.adresse, c.wilaya].filter(Boolean).join(", ");
+
+      const articlesHtml = (c.articles || []).map(a => `
+        <div class="article-row">
+          <span>${escapeHtml(a.modele)} — ${escapeHtml(a.taille)} · ${escapeHtml(a.couleur)} <span class="qte">× ${a.quantite}</span></span>
+          <span>${Number(a.total).toLocaleString('fr-FR')} DA</span>
+        </div>
+      `).join("");
+
       return `
         <div class="commande-card">
           <div class="commande-top">
             <div>
               <div class="commande-client">${escapeHtml(c.client)}</div>
-              <div class="commande-date">${dateStr} — ${escapeHtml(c.wilaya || "")}</div>
+              <div class="commande-meta">${dateStr}${lieuStr ? " — " + escapeHtml(lieuStr) : ""}</div>
+              <div class="commande-num">${escapeHtml(c.numCommande)}</div>
             </div>
             <div class="commande-total">${Number(c.total).toLocaleString('fr-FR')} DA</div>
           </div>
-          <div class="commande-detail">
-            <span class="tag">${escapeHtml(c.modele)}</span>
-            <span class="tag">${escapeHtml(c.taille)}</span>
-            <span class="tag">${escapeHtml(c.couleur)}</span>
-            × ${c.quantite} — ${escapeHtml(c.modePaiement || "")}
-            ${c.commentaire ? '<br>💬 ' + escapeHtml(c.commentaire) : ''}
-          </div>
+          <div class="articles-list">${articlesHtml}</div>
+          ${c.commentaire ? `<div class="commande-comment">💬 ${escapeHtml(c.commentaire)}</div>` : ""}
           <div class="commande-bottom">
-            <select class="statut-select ${statutClass}" data-ligne="${c.ligne}" onchange="majStatut(this)">
+            <select class="statut-select ${statutClass}" data-num="${escapeHtml(c.numCommande)}" onchange="majStatut(this)">
               <option ${c.statut === "En attente" ? "selected" : ""}>En attente</option>
               <option ${c.statut === "Préparée" ? "selected" : ""}>Préparée</option>
               <option ${c.statut === "Expédiée" ? "selected" : ""}>Expédiée</option>
@@ -252,20 +207,20 @@
   }
 
   async function majStatut(selectEl) {
-    const ligne = selectEl.dataset.ligne;
+    const numCommande = selectEl.dataset.num;
     const nouveauStatut = selectEl.value;
     selectEl.disabled = true;
 
     try {
       const res = await fetch(WEBAPP_URL, {
         method: "POST",
-        body: JSON.stringify({ type: "maj_statut", ligne: Number(ligne), statut: nouveauStatut })
+        body: JSON.stringify({ type: "maj_statut", numCommande: numCommande, statut: nouveauStatut })
       });
       const result = await res.json();
       if (!result.success) {
         alert("Erreur : " + result.message);
       } else {
-        const c = commandes.find(x => x.ligne == ligne);
+        const c = commandes.find(x => x.numCommande === numCommande);
         if (c) c.statut = nouveauStatut;
         afficherStats();
       }
@@ -278,10 +233,7 @@
 
   function escapeHtml(str) {
     if (str === null || str === undefined) return "";
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
   document.getElementById("searchInput").addEventListener("input", afficherListe);
