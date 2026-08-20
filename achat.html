@@ -132,6 +132,7 @@
   <h1>Achat de stock</h1>
   <p>Réapprovisionnement & nouveaux produits</p>
   <nav>
+    <a href="index.html">Menu</a>
     <a href="commande.html">Nouvelle commande</a>
     <a href="suivi.html">Suivi des commandes</a>
   </nav>
@@ -198,15 +199,9 @@
             <label for="modeleNouveau">Modèle</label>
             <input type="text" id="modeleNouveau" placeholder="Ex: Oversize Rayé" required>
           </div>
-          <div class="row2">
-            <div class="field">
-              <label for="typeColNouveau">Type de col</label>
-              <input type="text" id="typeColNouveau" placeholder="Ex: Col rond">
-            </div>
-            <div class="field">
-              <label for="tailleNouveau">Taille</label>
-              <input type="text" id="tailleNouveau" placeholder="Ex: M, L, XL" required>
-            </div>
+          <div class="field">
+            <label for="tailleNouveau">Taille</label>
+            <input type="text" id="tailleNouveau" placeholder="Ex: M, L, XL" required>
           </div>
           <div class="field">
             <label for="couleurNouveau">Couleur</label>
@@ -257,7 +252,7 @@
 
 <script>
   // ⚠️ Même URL que dans commande.html et suivi.html (finit par /exec)
-  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxiU1AxtIVfclYHPp-DxYn0ZRhwg_w8-CuDVZUht4SweBGDbz2b2E4yJ2xwS3Kj5dc8EQ/exec";
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxL1IMCkX_7FTMbF9LeM5IC1bUMaBdhAK_BD631rN6snmn3tqYY5FgQREgm6M0EYqLQ-Q/exec";
 
   let produits = [];
 
@@ -371,7 +366,6 @@
       mode: "nouveau",
       ref: document.getElementById("refNouveau").value.trim(),
       modele: document.getElementById("modeleNouveau").value,
-      typeCol: document.getElementById("typeColNouveau").value,
       taille: document.getElementById("tailleNouveau").value,
       couleur: document.getElementById("couleurNouveau").value,
       prixAchat: document.getElementById("prixAchatNouveau").value,
