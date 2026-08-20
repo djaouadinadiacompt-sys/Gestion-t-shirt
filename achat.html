@@ -192,10 +192,6 @@
         <div class="card">
           <h2>Nouveau produit</h2>
           <div class="field">
-            <label for="refNouveau">Référence</label>
-            <input type="text" id="refNouveau" placeholder="Ex: TS-003" required>
-          </div>
-          <div class="field">
             <label for="modeleNouveau">Modèle</label>
             <input type="text" id="modeleNouveau" placeholder="Ex: Oversize Rayé" required>
           </div>
@@ -364,7 +360,7 @@
     const payload = {
       type: "achat_stock",
       mode: "nouveau",
-      ref: document.getElementById("refNouveau").value.trim(),
+      ref: "",
       modele: document.getElementById("modeleNouveau").value,
       taille: document.getElementById("tailleNouveau").value,
       couleur: document.getElementById("couleurNouveau").value,
